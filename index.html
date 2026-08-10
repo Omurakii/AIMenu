@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>메뉴 기획 스튜디오</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css');
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap');
+*{ box-sizing:border-box; }
+:root{
+  --hanwha:#F26924; --hanwha-deep:#D9500F; --hanwha-wash:#FDEEE3;
+  --ink:#201A16; --ink-soft:#6B615A; --paper:#FBF8F4; --card:#FFFFFF; --line:#EDE5DC;
+}
+body{ margin:0; font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Segoe UI',sans-serif;
+  color:var(--ink); background:var(--paper); -webkit-font-smoothing:antialiased; }
+.mp-header{ display:flex; align-items:center; gap:12px; padding:20px 28px; border-bottom:1px solid var(--line); background:var(--card); }
+.mp-mark{ width:30px; height:30px; border-radius:8px; background:var(--hanwha); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:15px; }
+.mp-title{ font-size:17px; font-weight:800; letter-spacing:-0.01em; }
+.mp-sub{ font-size:12.5px; color:var(--ink-soft); margin-left:auto; }
+.mp-grid{ display:grid; grid-template-columns:392px 1fr; align-items:start; }
+@media (max-width:920px){ .mp-grid{ grid-template-columns:1fr; } }
+.mp-form{ padding:26px 28px 34px; border-right:1px solid var(--line); position:sticky; top:0; }
+@media (max-width:920px){ .mp-form{ position:static; border-right:none; border-bottom:1px solid var(--line); } }
+.mp-eyebrow{ font-size:11px; font-weight:700; letter-spacing:0.12em; color:var(--hanwha); text-transform:uppercase; margin-bottom:6px; }
+.mp-formtitle{ font-size:20px; font-weight:800; letter-spacing:-0.01em; margin:0 0 20px; }
+.mp-field{ margin-bottom:16px; }
+.mp-label{ display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; }
+.mp-hint{ font-weight:500; color:var(--ink-soft); }
+.mp-input,.mp-select,.mp-area{ width:100%; border:1px solid var(--line); border-radius:10px; background:#fff; padding:11px 12px; font-size:14px; color:var(--ink); font-family:inherit; transition:border-color .15s, box-shadow .15s; }
+.mp-area{ resize:vertical; min-height:64px; line-height:1.5; }
+.mp-input::placeholder,.mp-area::placeholder{ color:#B7ADA3; }
+.mp-input:focus,.mp-select:focus,.mp-area:focus{ outline:none; border-color:var(--hanwha); box-shadow:0 0 0 3px var(--hanwha-wash); }
+.mp-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.mp-btn{ width:100%; margin-top:8px; border:none; border-radius:10px; background:var(--hanwha); color:#fff; font-size:14.5px; font-weight:700; padding:13px 16px; cursor:pointer; transition:background .15s, transform .05s; font-family:inherit; }
+.mp-btn:hover{ background:var(--hanwha-deep); }
+.mp-btn:active{ transform:translateY(1px); }
+.mp-btn:disabled{ background:#E7D9CE; cursor:not-allowed; }
+.mp-setup{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:22px; }
+.mp-setup-h{ display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+.mp-setup-h b{ font-size:13px; }
+.mp-setup-h span{ font-size:12px; color:var(--ink-soft); }
+.mp-check{ display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink-soft); margin-top:12px; cursor:pointer; }
+.mp-check input{ width:15px; height:15px; accent-color:var(--hanwha); }
+.mp-warn{ font-size:11.5px; color:#8A5A2B; background:#FBEFE2; border:1px solid #F0DAC2; border-radius:8px; padding:9px 11px; margin-top:12px; line-height:1.55; }
+.mp-small{ font-size:11.5px; color:var(--ink-soft); margin-top:6px; line-height:1.5; }
+.mp-linkbtn{ background:none; border:none; color:var(--hanwha-deep); font-size:11.5px; cursor:pointer; padding:0; margin-top:8px; text-decoration:underline; font-family:inherit; }
+.mp-results{ padding:30px 34px 60px; min-height:520px; }
+@media (max-width:920px){ .mp-results{ padding:26px 22px 50px; } }
+.mp-empty{ max-width:420px; margin:70px auto; text-align:center; color:var(--ink-soft); }
+.mp-empty-ic{ width:52px; height:52px; border-radius:14px; background:var(--hanwha-wash); color:var(--hanwha); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:24px; }
+.mp-empty h3{ color:var(--ink); font-size:16px; margin:0 0 8px; font-weight:800; }
+.mp-empty p{ font-size:13.5px; line-height:1.6; margin:0; }
+.mp-loading{ max-width:420px; margin:90px auto; text-align:center; }
+.mp-spin{ width:34px; height:34px; border:3px solid var(--line); border-top-color:var(--hanwha); border-radius:50%; margin:0 auto 18px; animation:mp-rot .8s linear infinite; }
+@keyframes mp-rot{ to{ transform:rotate(360deg); } }
+.mp-loading p{ font-size:14px; color:var(--ink-soft); margin:0; }
+.mp-loading .mp-step{ font-weight:700; color:var(--ink); }
+.mp-err{ max-width:460px; margin:60px auto; background:#fff; border:1px solid #F3C9B6; border-radius:12px; padding:22px; text-align:center; }
+.mp-err h3{ margin:0 0 8px; font-size:15px; color:var(--hanwha-deep); }
+.mp-err p{ margin:0 0 14px; font-size:13.5px; color:var(--ink-soft); line-height:1.6; word-break:break-word; }
+.mp-doc-head{ border-bottom:2px solid var(--hanwha); padding-bottom:18px; margin-bottom:6px; }
+.mp-concept{ font-size:13px; color:var(--hanwha); font-weight:700; margin-bottom:6px; }
+.mp-doc-title{ font-family:'Nanum Myeongjo',serif; font-size:26px; font-weight:800; letter-spacing:-0.02em; line-height:1.25; margin:0 0 12px; }
+.mp-targetfit{ font-size:14px; line-height:1.65; color:var(--ink-soft); margin:0; }
+.mp-chips{ display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 30px; }
+.mp-chip{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--hanwha-deep); background:var(--hanwha-wash); border:1px solid #F6D3BF; border-radius:999px; padding:6px 12px; line-height:1.4; }
+.mp-chip-dot{ width:5px; height:5px; border-radius:50%; background:var(--hanwha); }
+.mp-course{ margin-bottom:26px; }
+.mp-course-name{ font-family:'Nanum Myeongjo',serif; font-size:18px; font-weight:800; margin:0 0 12px; display:flex; align-items:center; gap:12px; }
+.mp-course-name::after{ content:""; flex:1; height:1px; background:var(--line); }
+.mp-item{ padding:14px 0; border-bottom:1px dashed var(--line); }
+.mp-item:last-child{ border-bottom:none; }
+.mp-item-top{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+.mp-item-name{ font-size:15.5px; font-weight:700; }
+.mp-item-price{ font-size:14px; font-weight:800; color:var(--hanwha-deep); white-space:nowrap; }
+.mp-item-desc{ font-size:13px; color:var(--ink-soft); line-height:1.55; margin-top:3px; }
+.mp-item-facts{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:9px; }
+.mp-fact{ font-size:12px; color:var(--ink); }
+.mp-fact i{ display:block; font-style:normal; font-size:10px; font-weight:700; letter-spacing:0.06em; color:#A99E93; margin-bottom:2px; }
+.mp-allergens{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }
+.mp-alg{ font-size:11px; font-weight:600; color:#8A5A2B; background:#FBEFE2; border:1px solid #F0DAC2; border-radius:6px; padding:2px 8px; }
+.mp-item-why{ font-size:12px; color:var(--ink-soft); line-height:1.5; margin-top:9px; padding-left:11px; border-left:2px solid var(--hanwha-wash); }
+.mp-item-why b{ color:var(--hanwha-deep); font-weight:700; }
+.mp-sig{ background:linear-gradient(180deg,#FFF9F5,#fff); border:1px solid #F6D3BF; border-radius:14px; padding:20px 22px; margin:6px 0 28px; }
+.mp-sig-tag{ font-size:11px; font-weight:800; letter-spacing:0.12em; color:var(--hanwha); text-transform:uppercase; }
+.mp-sig-topline{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+.mp-sig-name{ font-family:'Nanum Myeongjo',serif; font-size:20px; font-weight:800; margin:6px 0 8px; }
+.mp-sig-desc{ font-size:13.5px; line-height:1.6; margin:0 0 8px; }
+.mp-sig-why{ font-size:12.5px; line-height:1.55; color:var(--ink-soft); margin:0; }
+.mp-notes{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:920px){ .mp-notes{ grid-template-columns:1fr; } }
+.mp-strategy{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; }
+.mp-strategy h4{ margin:0 0 8px; font-size:13px; font-weight:800; }
+.mp-strategy p{ margin:0; font-size:13.5px; line-height:1.65; color:var(--ink-soft); }
+.mp-foot{ margin-top:26px; font-size:11.5px; color:#A99E93; line-height:1.6; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+const KEY_STORE = "mp_anthropic_key";
+const MODEL_DEFAULT = "claude-sonnet-5";
+const CUISINES = ["이탈리안","프렌치","멕시칸","한식","일식","중식","동남아","아메리칸","지중해","퓨전","기타"];
+const FORMATS = ["캐주얼 다이닝","파인 다이닝","비스트로","뷔페","펍/바","브런치·카페","패스트캐주얼"];
+const PRICES = ["가성비 (객단가 ~1.5만)","중가 (1.5~3만)","프리미엄 (3~6만)","파인다이닝 (6만~)"];
+
+function buildSystem(useWeb) {
+  return `당신은 한국 외식업 메뉴 기획 컨설턴트입니다.
+${useWeb ? "먼저 web_search 도구로 (1) 해당 지역·상권 특성과 경쟁 현황, (2) 해당 요리 장르/운영 형태의 최신 외식 트렌드, (3) 타깃 고객층 선호를 조사해 근거로 활용하세요.\n" : ""}반드시 아래 JSON 객체 '하나만' 출력합니다. 마크다운, 코드펜스, 설명 문장 없이 순수 JSON만 출력하세요. 한국어로, 간결하게 작성합니다.
+코스(categories)는 3개, 코스별 메뉴는 2개로 제한합니다. 원가·원가율은 국내 시세 기준 합리적 추정치로 채우세요.
+{
+ "conceptTitle": "제안 컨셉을 담은 한 줄",
+ "insights": ["시장/트렌드 인사이트 3개 (각 한 문장)"],
+ "targetFit": "이 컨셉이 상권·고객층에 맞는 이유 2~3문장",
+ "categories": [
+   {"course":"코스명","items":[
+     {"name":"메뉴명","desc":"한 줄 설명","price":"₩판매가",
+      "cost":"예상 원가·원가율 (예: 약 ₩4,200 · 28%)",
+      "allergens":["주요 알레르기 유발 요소"],
+      "plating":"플레이팅·비주얼 포인트 한 줄",
+      "why":"상권/고객층 근거 한 문장"}
+   ]}
+ ],
+ "signature": {"name":"시그니처명","desc":"설명","price":"₩판매가",
+   "cost":"예상 원가·원가율","allergens":["..."],"plating":"플레이팅 포인트","why":"이유"},
+ "priceStrategy": "객단가·마진 전략 2~3문장",
+ "kitchenNotes": "주방 운영 노트: 회전율·조리 난이도·식자재 공용화 2~3문장"
+}`;
+}
+function buildUserMsg(f) {
+  return `다음 조건으로 레스토랑 메뉴를 기획해줘.
+- 오픈 지역/상권: ${f.region}
+- 상권 특성: ${f.vibe || "미입력"}
+- 핵심 고객층: ${f.customer}
+- 요리 장르: ${f.cuisine}
+- 운영 형태: ${f.format}
+- 가격대: ${f.price}
+- 추가 요청: ${f.extra || "없음"}`;
+}
+async function callClaude(apiKey, model, useWeb, form) {
+  const body = {
+    model: model || MODEL_DEFAULT,
+    max_tokens: 2000,
+    system: buildSystem(useWeb),
+    messages: [{ role: "user", content: buildUserMsg(form) }],
+  };
+  if (useWeb) body.tools = [{ type: "web_search_20250305", name: "web_search" }];
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = (data && data.error && data.error.message) || `API 오류 (${res.status})`;
+    throw new Error(msg);
+  }
+  const text = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n");
+  const s = text.indexOf("{"), e = text.lastIndexOf("}");
+  if (s === -1 || e === -1) throw new Error("모델 응답에서 JSON을 찾지 못했어요. 다시 시도하세요.");
+  return JSON.parse(text.slice(s, e + 1));
+}
+
+function Allergens({ list }) {
+  if (!Array.isArray(list) || !list.length) return null;
+  return <div className="mp-allergens">{list.map((a,i)=><span className="mp-alg" key={i}>{a}</span>)}</div>;
+}
+function Facts({ cost, plating }) {
+  if (!cost && !plating) return null;
+  return (
+    <div className="mp-item-facts">
+      {cost && <span className="mp-fact"><i>예상 원가</i>{cost}</span>}
+      {plating && <span className="mp-fact"><i>플레이팅</i>{plating}</span>}
+    </div>
+  );
+}
+function Item({ it }) {
+  return (
+    <div className="mp-item">
+      <div className="mp-item-top">
+        <span className="mp-item-name">{it.name}</span>
+        {it.price && <span className="mp-item-price">{it.price}</span>}
+      </div>
+      {it.desc && <div className="mp-item-desc">{it.desc}</div>}
+      <Facts cost={it.cost} plating={it.plating} />
+      <Allergens list={it.allergens} />
+      {it.why && <div className="mp-item-why"><b>왜?</b> {it.why}</div>}
+    </div>
+  );
+}
+
+function App() {
+  const [apiKey, setApiKey] = useState("");
+  const [model, setModel] = useState(MODEL_DEFAULT);
+  const [useWeb, setUseWeb] = useState(true);
+  const [remember, setRemember] = useState(false);
+  const [setupOpen, setSetupOpen] = useState(true);
+
+  const [form, setForm] = useState({
+    region:"", vibe:"", customer:"",
+    cuisine:"이탈리안", format:"캐주얼 다이닝", price:"중가 (1.5~3만)", extra:"",
+  });
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
+  const set = (k)=>(e)=>setForm((f)=>({ ...f, [k]: e.target.value }));
+  const ready = apiKey.trim() && form.region.trim() && form.customer.trim();
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(KEY_STORE);
+      if (saved) { setApiKey(saved); setRemember(true); setSetupOpen(false); }
+    } catch (_) {}
+  }, []);
+
+  function onKeyChange(v) {
+    setApiKey(v);
+    if (remember) { try { localStorage.setItem(KEY_STORE, v); } catch (_) {} }
+  }
+  function onRememberChange(v) {
+    setRemember(v);
+    try {
+      if (v) localStorage.setItem(KEY_STORE, apiKey);
+      else localStorage.removeItem(KEY_STORE);
+    } catch (_) {}
+  }
+  function clearKey() {
+    setApiKey(""); setRemember(false);
+    try { localStorage.removeItem(KEY_STORE); } catch (_) {}
+  }
+
+  async function generate() {
+    setLoading(true); setError(""); setResult(null);
+    try {
+      const data = await callClaude(apiKey.trim(), model.trim(), useWeb, form);
+      setResult(data);
+    } catch (err) {
+      setError(err.message || "추천을 생성하지 못했어요. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div>
+      <header className="mp-header">
+        <div className="mp-mark">M</div>
+        <div className="mp-title">메뉴 기획 스튜디오</div>
+        <div className="mp-sub">상권·고객·컨셉 → 메뉴 제안</div>
+      </header>
+      <div className="mp-grid">
+        <section className="mp-form">
+
+          <div className="mp-setup">
+            <div className="mp-setup-h" onClick={()=>setSetupOpen(o=>!o)}>
+              <b>연결 설정</b>
+              <span>{apiKey ? "키 입력됨" : "API 키 필요"} · {setupOpen ? "접기" : "펼치기"}</span>
+            </div>
+            {setupOpen && (
+              <div style={{ marginTop:12 }}>
+                <label className="mp-label">Anthropic API 키</label>
+                <input className="mp-input" type="password" placeholder="sk-ant-..."
+                  value={apiKey} onChange={(e)=>onKeyChange(e.target.value)} autoComplete="off" />
+                <div className="mp-small">키는 이 브라우저에서 Anthropic으로 직접 전송됩니다. 깃허브 파일에는 저장되지 않아요.</div>
+
+                <div style={{ marginTop:14 }}>
+                  <label className="mp-label">모델 <span className="mp-hint">(오류 시 현재 모델명으로 변경)</span></label>
+                  <input className="mp-input" value={model} onChange={(e)=>setModel(e.target.value)} />
+                </div>
+
+                <label className="mp-check">
+                  <input type="checkbox" checked={useWeb} onChange={(e)=>setUseWeb(e.target.checked)} />
+                  웹 검색으로 상권·트렌드 참고 (끄면 더 빠르고 저렴)
+                </label>
+                <label className="mp-check">
+                  <input type="checkbox" checked={remember} onChange={(e)=>onRememberChange(e.target.checked)} />
+                  이 브라우저에 키 저장 (내 PC에서만)
+                </label>
+                {remember && <button className="mp-linkbtn" onClick={clearKey}>저장된 키 지우기</button>}
+
+                <div className="mp-warn">
+                  API 키는 비밀번호처럼 다루세요. 키를 HTML 파일에 직접 적어 깃허브에 올리면 공개되어 도용될 수 있습니다. 반드시 실행된 화면의 이 칸에만 입력하세요.
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="mp-eyebrow">기획 브리프</div>
+          <h2 className="mp-formtitle">오픈 조건을 입력하세요</h2>
+          <div className="mp-field">
+            <label className="mp-label">오픈 지역 / 상권 <span className="mp-hint">*</span></label>
+            <input className="mp-input" placeholder="예: 성수동, 판교역 인근" value={form.region} onChange={set("region")} />
+          </div>
+          <div className="mp-field">
+            <label className="mp-label">상권 특성 <span className="mp-hint">(선택)</span></label>
+            <input className="mp-input" placeholder="예: 오피스 밀집, 저녁 유동인구 많음" value={form.vibe} onChange={set("vibe")} />
+          </div>
+          <div className="mp-field">
+            <label className="mp-label">핵심 고객층 <span className="mp-hint">*</span></label>
+            <input className="mp-input" placeholder="예: 20–30대 직장인, 데이트 수요" value={form.customer} onChange={set("customer")} />
+          </div>
+          <div className="mp-field">
+            <div className="mp-row">
+              <div>
+                <label className="mp-label">요리 장르</label>
+                <select className="mp-select" value={form.cuisine} onChange={set("cuisine")}>
+                  {CUISINES.map((c)=><option key={c}>{c}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="mp-label">운영 형태</label>
+                <select className="mp-select" value={form.format} onChange={set("format")}>
+                  {FORMATS.map((c)=><option key={c}>{c}</option>)}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className="mp-field">
+            <label className="mp-label">가격대</label>
+            <select className="mp-select" value={form.price} onChange={set("price")}>
+              {PRICES.map((c)=><option key={c}>{c}</option>)}
+            </select>
+          </div>
+          <div className="mp-field">
+            <label className="mp-label">추가 요청 <span className="mp-hint">(선택)</span></label>
+            <textarea className="mp-area" placeholder="예: 채식 옵션 포함, 회전율 중시, 시그니처 파스타 강조" value={form.extra} onChange={set("extra")} />
+          </div>
+          <button className="mp-btn" disabled={!ready || loading} onClick={generate}>
+            {loading ? "생성 중…" : "메뉴 제안 생성"}
+          </button>
+          {!apiKey.trim() && <div className="mp-small">먼저 위 연결 설정에서 API 키를 입력하세요.</div>}
+        </section>
+
+        <section className="mp-results">
+          {!result && !loading && !error && (
+            <div className="mp-empty">
+              <div className="mp-empty-ic">✦</div>
+              <h3>제안서가 여기에 표시됩니다</h3>
+              <p>API 키를 입력하고 상권·고객층·컨셉을 채운 뒤 생성하면, 웹에서 상권·트렌드를 조사해 코스별 세부 메뉴를 제안합니다.</p>
+            </div>
+          )}
+          {loading && (
+            <div className="mp-loading">
+              <div className="mp-spin"></div>
+              <p><span className="mp-step">{useWeb ? "웹에서 상권·트렌드 조사 중…" : "메뉴 구성 중…"}</span><br/>잠시만 기다려 주세요.</p>
+            </div>
+          )}
+          {error && (
+            <div className="mp-err">
+              <h3>생성 실패</h3>
+              <p>{error}</p>
+              <button className="mp-btn" onClick={generate} style={{ maxWidth:200, margin:"0 auto" }}>다시 시도</button>
+            </div>
+          )}
+          {result && (
+            <div>
+              <div className="mp-doc-head">
+                <div className="mp-concept">제안 컨셉</div>
+                <h1 className="mp-doc-title">{result.conceptTitle}</h1>
+                <p className="mp-targetfit">{result.targetFit}</p>
+              </div>
+              {Array.isArray(result.insights) && (
+                <div className="mp-chips">
+                  {result.insights.map((t,i)=><span className="mp-chip" key={i}><span className="mp-chip-dot"></span>{t}</span>)}
+                </div>
+              )}
+              {(result.categories || []).map((cat,i)=>(
+                <div className="mp-course" key={i}>
+                  <h3 className="mp-course-name">{cat.course}</h3>
+                  {(cat.items || []).map((it,j)=><Item key={j} it={it} />)}
+                </div>
+              ))}
+              {result.signature && (
+                <div className="mp-sig">
+                  <div className="mp-sig-tag">시그니처 메뉴</div>
+                  <div className="mp-sig-topline">
+                    <div className="mp-sig-name">{result.signature.name}</div>
+                    {result.signature.price && <div className="mp-item-price">{result.signature.price}</div>}
+                  </div>
+                  <p className="mp-sig-desc">{result.signature.desc}</p>
+                  <Facts cost={result.signature.cost} plating={result.signature.plating} />
+                  <Allergens list={result.signature.allergens} />
+                  {result.signature.why && <p className="mp-sig-why">{result.signature.why}</p>}
+                </div>
+              )}
+              {(result.priceStrategy || result.kitchenNotes) && (
+                <div className="mp-notes">
+                  {result.priceStrategy && (
+                    <div className="mp-strategy"><h4>가격 · 객단가 전략</h4><p>{result.priceStrategy}</p></div>
+                  )}
+                  {result.kitchenNotes && (
+                    <div className="mp-strategy"><h4>주방 운영 노트</h4><p>{result.kitchenNotes}</p></div>
+                  )}
+                </div>
+              )}
+              <p className="mp-foot">원가·원가율은 AI 추정치입니다 · 실제 매입가·수율로 재검증하세요.</p>
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
